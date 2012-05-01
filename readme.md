@@ -23,6 +23,10 @@ Run migration
 
 Go to Refinery admin and set appropriate Facebook API key.
 
+Access token can be created by using FB Graph API Explorer tools. Make sure you *disabled* "Remove Offline access permission".
+Facebook page is any page the facebook accound can post to.
+
+
 ### Set up Cron Job for blog published in the future.
 
 Set your cron job to run the following task.
