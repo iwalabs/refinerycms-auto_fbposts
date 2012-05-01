@@ -1,0 +1,14 @@
+en:
+  shared:
+    admin:
+      image_picker:
+        image: image
+  plugins:
+    auto_tweets:
+      title: Auto Facebook Posts
+  admin:
+    blog:
+      posts:
+        form:
+          post_facebook: Post to Facebook
+          facebook_posted: Posted to Facebook

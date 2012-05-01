@@ -1,0 +1,119 @@
+<%= form_for [:admin, @blog_post] do |f| -%>
+  <%= render :partial => "/shared/admin/error_messages",
+             :locals => {
+               :object => f.object,
+               :include_object_name => true
+             } %>
+
+  <div class='field'>
+    <%= f.label :title -%>
+    <%= f.text_field :title, :class => 'larger widest' -%>
+  </div>
+
+  <div class='field'>
+    <%= f.label :caption -%>
+    <%= f.text_area :caption, :class => 'widest', :rows => 5 -%>
+  </div>
+
+  <div class='field'>
+    <div id='page-tabs' class='clearfix ui-tabs ui-widget ui-widget-content ui-corner-all'>
+      <ul id='page_parts'>
+        <li class='ui-state-default ui-state-active'>
+          <%= link_to t('body', :scope => 'activerecord.attributes.blog_post'), "#page_part_body" %>
+        </li>
+        <li class='ui-state-default'>
+          <%= link_to t('teaser', :scope => 'activerecord.attributes.blog_post'), "#page_part_teaser" %>
+        </li>
+        <% Refinery::Blog.tabs.each_with_index do |tab, tab_index| %>
+          <li class='ui-state-default' id="custom_<%= tab.name %>_tab">
+            <%= link_to tab.name.titleize, "#custom_tab_#{tab_index}" %>
+          </li>
+        <% end %>
+      </ul>
+
+      <div id='page_part_editors'>
+
+        <% part_index = -1 %>
+          <%= render :partial => 'form_part',
+                     :locals => {
+                       :f => f,
+                       :part_index => (part_index += 1),
+                     } -%>
+          <%= render :partial => 'teaser_part',
+                     :locals => {
+                       :f => f,
+                       :part_index => (part_index += 1),
+                     } if f.object.respond_to?(:custom_teaser) -%>
+        <% Refinery::Blog.tabs.each_with_index do |tab, tab_index| %>
+          <div class='page_part' id='<%= "custom_tab_#{tab_index}" %>'>
+            <%= render :partial => tab.partial, :locals => {:f => f} %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class='field'>
+    <%= f.label :tag_list, t('blog.shared.tags.title') -%>
+    <%= f.text_field :tag_list, :class => 'larger' -%>
+  </div>
+
+  <div id='more_options_field'>
+    <p>
+      <%= link_to t('.advanced_options'), "#",
+                  :id => 'toggle_advanced_options',
+                  :title => t('.toggle_advanced_options') %>
+    </p>
+    <span id='draft_field'>
+      <% if f.object.facebook_posted %>
+        (<%= t('.facebook_posted') %>) |
+      <% else %>
+        <%= f.check_box :post_facebook %>
+        <%= f.label :post_facebook, t('.post_facebook'), :class => "stripped" %> |
+      <% end %>
+      <%= f.check_box :draft %>
+      <%= f.label :draft, t('.save_as_draft'), :class => "stripped" %>
+    </span>
+  </div>
+  <div id='more_options' style="display:none;">
+    <div class="hemisquare">
+      <h3><%= t('title', :scope => 'admin.blog.submenu.categories') %></h3>
+      <ul class='blog_categories'>
+        <% @blog_categories.each do |category| %>
+          <li>
+             <%= check_box_tag 'blog_post[category_ids][]', category.id,
+                               @blog_post.categories.include?(category),
+                               :id => (id="blog_post_category_ids_#{category.id}") %>
+             <%= label_tag 'blog_post[category_ids][]', category.title,
+                           :class => 'stripped',
+                           :for => id %>
+          </li>
+        <% end %>
+      </ul>
+      <h3><%= t('.published_at') %></h3>
+      <%= f.datetime_select :published_at %>
+
+      <div class='field'>
+        <span class='label_with_help'>
+          <%= f.label :custom_url, t('.custom_url') %>
+          <%= refinery_help_tag t('.custom_url_help') %>
+        </span>
+        <%= f.text_field :custom_url, :class => "widest" %>
+      </div>
+
+    </div>
+    <div class='hemisquare right_side'>
+      <%= render :partial => '/seo_meta/form', :locals => {:form => f} %>
+    </div>
+  </div>
+  <%= render :partial => "/shared/admin/form_actions",
+              :locals => {
+                :f => f,
+                :continue_editing => true,
+                :delete_title => t('delete', :scope => 'admin.blog.posts.post')
+              } %>
+<% end -%>
+
+<% content_for :stylesheets, render(:partial => 'form.css') -%>
+<% content_for :javascripts, render(:partial => 'form.js') -%>
+<%= render 'shared/admin/autocomplete', :dom_id => '#blog_post_tag_list', :url => tags_admin_blog_posts_url %>
