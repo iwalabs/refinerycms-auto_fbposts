@@ -45,3 +45,12 @@ Set your cron job to run the following task.
 
     gem push refinerycms-auto_fbposts.gem
 
+## Authors
+
+* Jussi Virtanen: http://github.com/iwalabs
+* Timo Lehto: http://github.com/iwalabs
+* Joe Rerngniransatit: http://github.com/iwalabs
+
+## License
+
+Copyright 2012 Iwa Labs Ltd. Licensed under the MIT License.
